@@ -2137,6 +2137,46 @@ export interface Locale extends ILocale {
      */
     "oidcRedirectUri": ParameterizedString<"url">;
     /**
+     * OpenID Connectアカウントの連携
+     */
+    "oidcAccountLink": string;
+    /**
+     * OIDCでログインできるようにアカウントを連携します。
+     */
+    "oidcAccountLinkDescription": string;
+    /**
+     * 連携されているOpenID Connectアカウントはありません。
+     */
+    "oidcNoLinks": string;
+    /**
+     * OpenID Connectアカウントを連携
+     */
+    "oidcLink": string;
+    /**
+     * 連携解除
+     */
+    "oidcUnlink": string;
+    /**
+     * OpenID Connectアカウントの連携を解除しますか？
+     */
+    "oidcUnlinkConfirm": string;
+    /**
+     * OpenID Connectアカウントを連携しました。
+     */
+    "oidcLinked": string;
+    /**
+     * OpenID Connectアカウントの連携を解除しました。
+     */
+    "oidcUnlinked": string;
+    /**
+     * OpenID Connectアカウントの連携に失敗しました。
+     */
+    "oidcLinkFailedDescription": string;
+    /**
+     * OpenID Connectが設定されていません。管理者に設定を確認してください。
+     */
+    "oidcNotConfigured": string;
+    /**
      * もしくは
      */
     "or": string;

@@ -1990,6 +1990,9 @@ declare namespace entities {
         INotificationsResponse,
         INotificationsGroupedRequest,
         INotificationsGroupedResponse,
+        IOidcLinkConnectResponse,
+        IOidcLinkDisconnectRequest,
+        IOidcLinkListResponse,
         IPageLikesRequest,
         IPageLikesResponse,
         IPagesRequest,
@@ -2712,6 +2715,15 @@ type InviteListRequest = operations['invite___list']['requestBody']['content']['
 
 // @public (undocumented)
 type InviteListResponse = operations['invite___list']['responses']['200']['content']['application/json'];
+
+// @public (undocumented)
+type IOidcLinkConnectResponse = operations['i___oidc-link___connect']['responses']['200']['content']['application/json'];
+
+// @public (undocumented)
+type IOidcLinkDisconnectRequest = operations['i___oidc-link___disconnect']['requestBody']['content']['application/json'];
+
+// @public (undocumented)
+type IOidcLinkListResponse = operations['i___oidc-link___list']['responses']['200']['content']['application/json'];
 
 // @public (undocumented)
 type IPageLikesRequest = operations['i___page-likes']['requestBody']['content']['application/json'];
