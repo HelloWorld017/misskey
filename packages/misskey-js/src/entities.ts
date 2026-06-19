@@ -178,6 +178,12 @@ export type SigninWithPasskeyResponse = {
 	signinResponse: SigninFlowResponse & { finished: true };
 };
 
+export type OidcConsumeRequest = {
+	ticket: string;
+};
+
+export type OidcConsumeResponse = SigninFlowResponse & { finished: true };
+
 export type I2faRegisterKeyResponse = PublicKeyCredentialCreationOptionsJSON;
 
 export type I2faKeyDoneRequest = {

@@ -43,7 +43,10 @@ SPDX-License-Identifier: AGPL-3.0-only
 		<div :class="$style.orHr">
 			<p :class="$style.orMsg">{{ i18n.ts.or }}</p>
 		</div>
-		<div>
+		<div class="_gaps_s">
+			<MkButton v-if="instance.oidc?.enabled" type="a" :href="`${apiUrl}/oidc/login`" style="margin: auto auto;" large rounded primary>
+				<i class="ti ti-login-2" style="font-size: medium;"></i>{{ i18n.tsx.signinWith({ x: instance.oidc.providerName }) }}
+			</MkButton>
 			<MkButton type="submit" style="margin: auto auto;" large rounded primary gradate @click="emit('passkeyClick', $event)">
 				<i class="ti ti-device-usb" style="font-size: medium;"></i>{{ i18n.ts.signinWithPasskey }}
 			</MkButton>
@@ -57,10 +60,11 @@ import { ref } from 'vue';
 import { toUnicode } from 'punycode.js';
 
 import { query, extractDomain } from '@@/js/url.js';
-import { host as configHost } from '@@/js/config.js';
+import { apiUrl, host as configHost } from '@@/js/config.js';
 import type { OpenOnRemoteOptions } from '@/utility/please-login.js';
 import { i18n } from '@/i18n.js';
 import * as os from '@/os.js';
+import { instance } from '@/instance.js';
 
 import MkButton from '@/components/MkButton.vue';
 import MkInput from '@/components/MkInput.vue';

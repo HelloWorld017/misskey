@@ -18,6 +18,7 @@ import { ApiCallService } from './ApiCallService.js';
 import { SignupApiService } from './SignupApiService.js';
 import { SigninApiService } from './SigninApiService.js';
 import { SigninWithPasskeyApiService } from './SigninWithPasskeyApiService.js';
+import { OidcSigninApiService } from './OidcSigninApiService.js';
 import type { FastifyInstance, FastifyPluginOptions } from 'fastify';
 
 @Injectable()
@@ -39,6 +40,7 @@ export class ApiServerService {
 		private signupApiService: SignupApiService,
 		private signinApiService: SigninApiService,
 		private signinWithPasskeyApiService: SigninWithPasskeyApiService,
+		private oidcSigninApiService: OidcSigninApiService,
 	) {
 		//this.createServer = this.createServer.bind(this);
 	}
@@ -140,6 +142,16 @@ export class ApiServerService {
 				context?: string;
 			};
 		}>('/signin-with-passkey', (request, reply) => this.signinWithPasskeyApiService.signin(request, reply));
+
+		fastify.get('/oidc/login', (request, reply) => this.oidcSigninApiService.login(request, reply));
+
+		fastify.get('/oidc/callback', (request, reply) => this.oidcSigninApiService.callback(request, reply));
+
+		fastify.post<{
+			Body: {
+				ticket: string;
+			};
+		}>('/oidc/consume', (request, reply) => this.oidcSigninApiService.consume(request, reply));
 
 		fastify.post<{ Body: { code: string; } }>('/signup-pending', (request, reply) => this.signupApiService.signupPending(request, reply));
 

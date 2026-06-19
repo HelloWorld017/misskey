@@ -34,6 +34,42 @@ export const meta = {
 				type: 'boolean',
 				optional: false, nullable: false,
 			},
+			enableOidc: {
+				type: 'boolean',
+				optional: false, nullable: false,
+			},
+			oidcIssuer: {
+				type: 'string',
+				optional: false, nullable: true,
+			},
+			oidcClientId: {
+				type: 'string',
+				optional: false, nullable: true,
+			},
+			oidcClientSecret: {
+				type: 'string',
+				optional: false, nullable: true,
+			},
+			oidcScope: {
+				type: 'string',
+				optional: false, nullable: false,
+			},
+			oidcProviderName: {
+				type: 'string',
+				optional: false, nullable: false,
+			},
+			oidcAutoRegister: {
+				type: 'boolean',
+				optional: false, nullable: false,
+			},
+			oidcRequireVerifiedEmail: {
+				type: 'boolean',
+				optional: false, nullable: false,
+			},
+			oidcUsernameClaim: {
+				type: 'string',
+				optional: false, nullable: false,
+			},
 			enableHcaptcha: {
 				type: 'boolean',
 				optional: false, nullable: false,
@@ -662,6 +698,15 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				inquiryUrl: instance.inquiryUrl,
 				disableRegistration: instance.disableRegistration,
 				emailRequiredForSignup: instance.emailRequiredForSignup,
+				enableOidc: instance.enableOidc,
+				oidcIssuer: instance.oidcIssuer,
+				oidcClientId: instance.oidcClientId,
+				oidcClientSecret: instance.oidcClientSecret,
+				oidcScope: instance.oidcScope,
+				oidcProviderName: instance.oidcProviderName,
+				oidcAutoRegister: instance.oidcAutoRegister,
+				oidcRequireVerifiedEmail: instance.oidcRequireVerifiedEmail,
+				oidcUsernameClaim: instance.oidcUsernameClaim,
 				enableHcaptcha: instance.enableHcaptcha,
 				hcaptchaSiteKey: instance.hcaptchaSiteKey,
 				enableMcaptcha: instance.enableMcaptcha,

@@ -79,6 +79,15 @@ export const paramDef = {
 		cacheRemoteFiles: { type: 'boolean' },
 		cacheRemoteSensitiveFiles: { type: 'boolean' },
 		emailRequiredForSignup: { type: 'boolean' },
+		enableOidc: { type: 'boolean' },
+		oidcIssuer: { type: 'string', nullable: true },
+		oidcClientId: { type: 'string', nullable: true },
+		oidcClientSecret: { type: 'string', nullable: true },
+		oidcScope: { type: 'string' },
+		oidcProviderName: { type: 'string' },
+		oidcAutoRegister: { type: 'boolean' },
+		oidcRequireVerifiedEmail: { type: 'boolean' },
+		oidcUsernameClaim: { type: 'string' },
 		enableHcaptcha: { type: 'boolean' },
 		hcaptchaSiteKey: { type: 'string', nullable: true },
 		hcaptchaSecretKey: { type: 'string', nullable: true },
@@ -366,6 +375,42 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 			if (ps.emailRequiredForSignup !== undefined) {
 				set.emailRequiredForSignup = ps.emailRequiredForSignup;
+			}
+
+			if (ps.enableOidc !== undefined) {
+				set.enableOidc = ps.enableOidc;
+			}
+
+			if (ps.oidcIssuer !== undefined) {
+				set.oidcIssuer = ps.oidcIssuer || null;
+			}
+
+			if (ps.oidcClientId !== undefined) {
+				set.oidcClientId = ps.oidcClientId || null;
+			}
+
+			if (ps.oidcClientSecret !== undefined) {
+				set.oidcClientSecret = ps.oidcClientSecret || null;
+			}
+
+			if (ps.oidcScope !== undefined) {
+				set.oidcScope = ps.oidcScope || 'openid profile email';
+			}
+
+			if (ps.oidcProviderName !== undefined) {
+				set.oidcProviderName = ps.oidcProviderName || 'OpenID Connect';
+			}
+
+			if (ps.oidcAutoRegister !== undefined) {
+				set.oidcAutoRegister = ps.oidcAutoRegister;
+			}
+
+			if (ps.oidcRequireVerifiedEmail !== undefined) {
+				set.oidcRequireVerifiedEmail = ps.oidcRequireVerifiedEmail;
+			}
+
+			if (ps.oidcUsernameClaim !== undefined) {
+				set.oidcUsernameClaim = ps.oidcUsernameClaim || 'preferred_username';
 			}
 
 			if (ps.enableHcaptcha !== undefined) {

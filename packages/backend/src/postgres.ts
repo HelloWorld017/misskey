@@ -66,6 +66,7 @@ import { MiUserList } from '@/models/UserList.js';
 import { MiUserListFavorite } from '@/models/UserListFavorite.js';
 import { MiUserListMembership } from '@/models/UserListMembership.js';
 import { MiUserNotePining } from '@/models/UserNotePining.js';
+import { MiUserOidcLink } from '@/models/UserOidcLink.js';
 import { MiUserPending } from '@/models/UserPending.js';
 import { MiUserProfile } from '@/models/UserProfile.js';
 import { MiUserPublickey } from '@/models/UserPublickey.js';
@@ -194,6 +195,7 @@ export const entities = [
 	MiUserListFavorite,
 	MiUserListMembership,
 	MiUserNotePining,
+	MiUserOidcLink,
 	MiUserSecurityKey,
 	MiUsedUsername,
 	MiFollowing,

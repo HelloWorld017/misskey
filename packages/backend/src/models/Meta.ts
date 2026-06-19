@@ -192,6 +192,57 @@ export class MiMeta {
 	@Column('boolean', {
 		default: false,
 	})
+	public enableOidc: boolean;
+
+	@Column('varchar', {
+		length: 1024,
+		nullable: true,
+	})
+	public oidcIssuer: string | null;
+
+	@Column('varchar', {
+		length: 1024,
+		nullable: true,
+	})
+	public oidcClientId: string | null;
+
+	@Column('varchar', {
+		length: 1024,
+		nullable: true,
+	})
+	public oidcClientSecret: string | null;
+
+	@Column('varchar', {
+		length: 512,
+		default: 'openid profile email',
+	})
+	public oidcScope: string;
+
+	@Column('varchar', {
+		length: 128,
+		default: 'OpenID Connect',
+	})
+	public oidcProviderName: string;
+
+	@Column('boolean', {
+		default: false,
+	})
+	public oidcAutoRegister: boolean;
+
+	@Column('boolean', {
+		default: true,
+	})
+	public oidcRequireVerifiedEmail: boolean;
+
+	@Column('varchar', {
+		length: 128,
+		default: 'preferred_username',
+	})
+	public oidcUsernameClaim: string;
+
+	@Column('boolean', {
+		default: false,
+	})
 	public enableHcaptcha: boolean;
 
 	@Column('varchar', {

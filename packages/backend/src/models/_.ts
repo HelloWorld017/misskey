@@ -79,6 +79,7 @@ import { MiUserListFavorite } from '@/models/UserListFavorite.js';
 import { MiUserListMembership } from '@/models/UserListMembership.js';
 import { MiUserMemo } from '@/models/UserMemo.js';
 import { MiUserNotePining } from '@/models/UserNotePining.js';
+import { MiUserOidcLink } from '@/models/UserOidcLink.js';
 import { MiUserPending } from '@/models/UserPending.js';
 import { MiUserProfile } from '@/models/UserProfile.js';
 import { MiUserPublickey } from '@/models/UserPublickey.js';
@@ -153,6 +154,7 @@ export {
 	MiUserListFavorite,
 	MiUserListMembership,
 	MiUserNotePining,
+	MiUserOidcLink,
 	MiUserPending,
 	MiUserProfile,
 	MiUserPublickey,
@@ -233,6 +235,7 @@ export type UserListsRepository = Repository<MiUserList> & MiRepository<MiUserLi
 export type UserListFavoritesRepository = Repository<MiUserListFavorite> & MiRepository<MiUserListFavorite>;
 export type UserListMembershipsRepository = Repository<MiUserListMembership> & MiRepository<MiUserListMembership>;
 export type UserNotePiningsRepository = Repository<MiUserNotePining> & MiRepository<MiUserNotePining>;
+export type UserOidcLinksRepository = Repository<MiUserOidcLink> & MiRepository<MiUserOidcLink>;
 export type UserPendingsRepository = Repository<MiUserPending> & MiRepository<MiUserPending>;
 export type UserProfilesRepository = Repository<MiUserProfile> & MiRepository<MiUserProfile>;
 export type UserPublickeysRepository = Repository<MiUserPublickey> & MiRepository<MiUserPublickey>;

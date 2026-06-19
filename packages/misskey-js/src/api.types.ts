@@ -10,6 +10,10 @@ import {
 	UsersShowRequest,
 } from './autogen/entities.js';
 import {
+	I2faKeyDoneRequest,
+	I2faRegisterKeyResponse,
+	OidcConsumeRequest,
+	OidcConsumeResponse,
 	PartialRolePolicyOverride,
 	SigninFlowRequest,
 	SigninFlowResponse,
@@ -20,8 +24,6 @@ import {
 	SignupPendingResponse,
 	SignupRequest,
 	SignupResponse,
-	I2faRegisterKeyResponse,
-	I2faKeyDoneRequest,
 } from './entities.js';
 
 type Overwrite<T, U extends { [Key in keyof T]?: unknown }> = Omit<
@@ -110,8 +112,12 @@ export type Endpoints = Overwrite<
 						],
 					];
 					$default: SigninWithPasskeyInitResponse;
-				},
+				};
 			},
+		},
+		'oidc/consume': {
+			req: OidcConsumeRequest;
+			res: OidcConsumeResponse;
 		},
 		'i/2fa/register-key': {
 			req: I2faRegisterKeyRequest;
