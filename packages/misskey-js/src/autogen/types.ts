@@ -5481,6 +5481,10 @@ export type components = {
             clientOptions: components['schemas']['MetaClientOptions'];
             disableRegistration: boolean;
             emailRequiredForSignup: boolean;
+            oidc: {
+                enabled: boolean;
+                providerName: string;
+            };
             enableHcaptcha: boolean;
             hcaptchaSiteKey: string | null;
             enableMcaptcha: boolean;
@@ -5560,6 +5564,7 @@ export type components = {
             features?: {
                 registration: boolean;
                 emailRequiredForSignup: boolean;
+                oidc: boolean;
                 localTimeline: boolean;
                 globalTimeline: boolean;
                 hcaptcha: boolean;
@@ -9423,6 +9428,15 @@ export interface operations {
                         cacheRemoteFiles: boolean;
                         cacheRemoteSensitiveFiles: boolean;
                         emailRequiredForSignup: boolean;
+                        enableOidc: boolean;
+                        oidcIssuer: string | null;
+                        oidcClientId: string | null;
+                        oidcClientSecret: string | null;
+                        oidcScope: string;
+                        oidcProviderName: string;
+                        oidcAutoRegister: boolean;
+                        oidcRequireVerifiedEmail: boolean;
+                        oidcUsernameClaim: string;
                         enableHcaptcha: boolean;
                         hcaptchaSiteKey: string | null;
                         enableMcaptcha: boolean;
@@ -12906,6 +12920,15 @@ export interface operations {
                     cacheRemoteFiles?: boolean;
                     cacheRemoteSensitiveFiles?: boolean;
                     emailRequiredForSignup?: boolean;
+                    enableOidc?: boolean;
+                    oidcIssuer?: string | null;
+                    oidcClientId?: string | null;
+                    oidcClientSecret?: string | null;
+                    oidcScope?: string;
+                    oidcProviderName?: string;
+                    oidcAutoRegister?: boolean;
+                    oidcRequireVerifiedEmail?: boolean;
+                    oidcUsernameClaim?: string;
                     enableHcaptcha?: boolean;
                     hcaptchaSiteKey?: string | null;
                     hcaptchaSecretKey?: string | null;

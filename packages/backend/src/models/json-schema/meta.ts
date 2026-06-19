@@ -82,6 +82,20 @@ export const packedMetaLiteSchema = {
 			type: 'boolean',
 			optional: false, nullable: false,
 		},
+		oidc: {
+			type: 'object',
+			optional: false, nullable: false,
+			properties: {
+				enabled: {
+					type: 'boolean',
+					optional: false, nullable: false,
+				},
+				providerName: {
+					type: 'string',
+					optional: false, nullable: false,
+				},
+			},
+		},
 		enableHcaptcha: {
 			type: 'boolean',
 			optional: false, nullable: false,
@@ -325,6 +339,10 @@ export const packedMetaDetailedOnlySchema = {
 					optional: false, nullable: false,
 				},
 				emailRequiredForSignup: {
+					type: 'boolean',
+					optional: false, nullable: false,
+				},
+				oidc: {
 					type: 'boolean',
 					optional: false, nullable: false,
 				},

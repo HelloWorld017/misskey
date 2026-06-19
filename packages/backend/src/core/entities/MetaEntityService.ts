@@ -85,6 +85,10 @@ export class MetaEntityService {
 			inquiryUrl: instance.inquiryUrl,
 			disableRegistration: instance.disableRegistration,
 			emailRequiredForSignup: instance.emailRequiredForSignup,
+			oidc: {
+				enabled: instance.enableOidc && instance.oidcIssuer != null && instance.oidcClientId != null,
+				providerName: instance.oidcProviderName,
+			},
 			enableHcaptcha: instance.enableHcaptcha,
 			hcaptchaSiteKey: instance.hcaptchaSiteKey,
 			enableMcaptcha: instance.enableMcaptcha,
@@ -163,6 +167,7 @@ export class MetaEntityService {
 				globalTimeline: instance.policies.gtlAvailable,
 				registration: !instance.disableRegistration,
 				emailRequiredForSignup: instance.emailRequiredForSignup,
+				oidc: instance.enableOidc && instance.oidcIssuer != null && instance.oidcClientId != null,
 				hcaptcha: instance.enableHcaptcha,
 				recaptcha: instance.enableRecaptcha,
 				turnstile: instance.enableTurnstile,
@@ -175,4 +180,3 @@ export class MetaEntityService {
 		return packDetailed;
 	}
 }
-

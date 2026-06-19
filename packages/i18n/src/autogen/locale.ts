@@ -2081,6 +2081,58 @@ export interface Locale extends ILocale {
      */
     "signinFailed": string;
     /**
+     * OpenID Connectログイン
+     */
+    "oidcSignin": string;
+    /**
+     * OpenID Connectでログインできませんでした。管理者に設定を確認してください。
+     */
+    "oidcSigninFailedDescription": string;
+    /**
+     * OpenID Connectログインの有効期限が切れました。もう一度ログインしてください。
+     */
+    "oidcSigninExpiredDescription": string;
+    /**
+     * このOpenID Connectアカウントに対応するアカウントがありません。
+     */
+    "oidcAccountNotLinkedDescription": string;
+    /**
+     * プロバイダー名
+     */
+    "oidcProviderName": string;
+    /**
+     * Issuer
+     */
+    "oidcIssuer": string;
+    /**
+     * Client ID
+     */
+    "oidcClientId": string;
+    /**
+     * Client Secret
+     */
+    "oidcClientSecret": string;
+    /**
+     * Scope
+     */
+    "oidcScope": string;
+    /**
+     * 初回ログイン時にアカウントを自動作成する
+     */
+    "oidcAutoRegister": string;
+    /**
+     * 自動作成時に認証済みメールアドレスを必須にする
+     */
+    "oidcRequireVerifiedEmail": string;
+    /**
+     * ユーザー名に使うClaim
+     */
+    "oidcUsernameClaim": string;
+    /**
+     * リダイレクトURI: {url}
+     */
+    "oidcRedirectUri": ParameterizedString<"url">;
+    /**
      * もしくは
      */
     "or": string;

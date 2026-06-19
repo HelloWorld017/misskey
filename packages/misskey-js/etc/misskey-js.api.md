@@ -1482,6 +1482,10 @@ export type Endpoints = Overwrite<Endpoints_2, {
             };
         };
     };
+    'oidc/consume': {
+        req: OidcConsumeRequest;
+        res: OidcConsumeResponse;
+    };
     'i/2fa/register-key': {
         req: I2faRegisterKeyRequest;
         res: I2faRegisterKeyResponse_2;
@@ -1529,6 +1533,8 @@ declare namespace entities {
         SigninWithPasskeyRequest,
         SigninWithPasskeyInitResponse,
         SigninWithPasskeyResponse,
+        OidcConsumeRequest,
+        OidcConsumeResponse,
         I2faRegisterKeyResponse_2 as I2faRegisterKeyResponse,
         I2faKeyDoneRequest_2 as I2faKeyDoneRequest,
         PartialRolePolicyOverride,
@@ -3290,6 +3296,16 @@ export const notificationTypes: readonly ["note", "follow", "mention", "reply", 
 
 // @public (undocumented)
 export function nyaize(text: string): string;
+
+// @public (undocumented)
+type OidcConsumeRequest = {
+    ticket: string;
+};
+
+// @public (undocumented)
+type OidcConsumeResponse = SigninFlowResponse & {
+    finished: true;
+};
 
 // @public (undocumented)
 type Page = components['schemas']['Page'];
