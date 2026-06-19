@@ -246,6 +246,7 @@ export * as 'hashtags/trend' from './endpoints/hashtags/trend.js';
 export * as 'hashtags/users' from './endpoints/hashtags/users.js';
 export * as 'i' from './endpoints/i.js';
 export * as 'i/2fa/done' from './endpoints/i/2fa/done.js';
+export * as 'i/2fa/disable-password-login' from './endpoints/i/2fa/disable-password-login.js';
 export * as 'i/2fa/key-done' from './endpoints/i/2fa/key-done.js';
 export * as 'i/2fa/password-less' from './endpoints/i/2fa/password-less.js';
 export * as 'i/2fa/register' from './endpoints/i/2fa/register.js';

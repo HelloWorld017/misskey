@@ -657,6 +657,11 @@ export const packedMeDetailedOnlySchema = {
 			nullable: false, optional: false,
 			default: false,
 		},
+		disablePasswordLogin: {
+			type: 'boolean',
+			nullable: false, optional: false,
+			default: false,
+		},
 		securityKeys: {
 			type: 'boolean',
 			nullable: false, optional: false,

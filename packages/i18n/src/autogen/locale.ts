@@ -1909,6 +1909,14 @@ export interface Locale extends ILocale {
      */
     "passwordLessLoginDescription": string;
     /**
+     * パスワードログインを無効にする
+     */
+    "disablePasswordLogin": string;
+    /**
+     * パスワードでのログインを無効にします。OIDC連携またはパスワードレスログインでログインしてください。
+     */
+    "disablePasswordLoginDescription": string;
+    /**
      * パスワードをリセット
      */
     "resetPassword": string;

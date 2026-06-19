@@ -78,9 +78,20 @@ SPDX-License-Identifier: AGPL-3.0-only
 						</div>
 					</div>
 
-					<MkButton primary @click="connectOidc">
+					<MkButton primary class="_margin" @click="connectOidc">
 						<i class="ti ti-link"></i> {{ i18n.ts.oidcLink }}
 					</MkButton>
+
+					<SearchMarker :keywords="['password', 'login', 'disable', 'oidc']">
+						<MkSwitch
+							:disabled="oidcLinks.length === 0 || oidcLinkLoading"
+							:modelValue="disablePasswordLogin"
+							@update:modelValue="v => updateDisablePasswordLogin(v)"
+						>
+							<template #label><SearchLabel>{{ i18n.ts.disablePasswordLogin }}</SearchLabel></template>
+							<template #caption><SearchText>{{ i18n.ts.disablePasswordLoginDescription }}</SearchText></template>
+						</MkSwitch>
+					</SearchMarker>
 				</template>
 				<template v-else>
 					<MkInfo warn>{{ i18n.ts.oidcNotConfigured }}</MkInfo>
@@ -99,14 +110,18 @@ import FormSlot from '@/components/form/slot.vue';
 import MkButton from '@/components/MkButton.vue';
 import MkInfo from '@/components/MkInfo.vue';
 import MkPagination from '@/components/MkPagination.vue';
+import MkSwitch from '@/components/MkSwitch.vue';
 import MkTime from '@/components/global/MkTime.vue';
 import * as os from '@/os.js';
 import { misskeyApi } from '@/utility/misskey-api.js';
 import { i18n } from '@/i18n.js';
 import { instance } from '@/instance.js';
 import { definePage } from '@/page.js';
+import { ensureSignin } from '@/i.js';
 import MkFeatureBanner from '@/components/MkFeatureBanner.vue';
 import { Paginator } from '@/utility/paginator.js';
+
+const $i = ensureSignin();
 
 const paginator = markRaw(new Paginator('i/signin-history', {
 	limit: 5,
@@ -207,6 +222,14 @@ async function regenerateToken() {
 	misskeyApi('i/regenerate-token', {
 		password: auth.result.password,
 		token: auth.result.token,
+	});
+}
+
+const disablePasswordLogin = computed(() => $i.disablePasswordLogin ?? false);
+
+async function updateDisablePasswordLogin(value: boolean): Promise<void> {
+	await os.apiWithDialog('i/2fa/disable-password-login', {
+		value,
 	});
 }
 

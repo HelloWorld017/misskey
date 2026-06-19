@@ -2357,6 +2357,16 @@ export type paths = {
          */
         post: operations['i'];
     };
+    '/i/2fa/disable-password-login': {
+        /**
+         * i/2fa/disable-password-login
+         * @description No description provided.
+         *
+         *     **Internal Endpoint**: This endpoint is an API for the misskey mainframe and is not intended for use by third parties.
+         *     **Credential required**: *Yes*
+         */
+        post: operations['i___2fa___disable-password-login'];
+    };
     '/i/2fa/done': {
         /**
          * i/2fa/done
@@ -4377,6 +4387,8 @@ export type components = {
             twoFactorEnabled: boolean;
             /** @default false */
             usePasswordLessLogin: boolean;
+            /** @default false */
+            disablePasswordLogin: boolean;
             /** @default false */
             securityKeys: boolean;
             email?: string | null;
@@ -24462,6 +24474,68 @@ export interface operations {
                 };
                 content: {
                     'application/json': components['schemas']['MeDetailed'];
+                };
+            };
+            /** @description Client error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    'application/json': components['schemas']['Error'];
+                };
+            };
+            /** @description Authentication error */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    'application/json': components['schemas']['Error'];
+                };
+            };
+            /** @description Forbidden error */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    'application/json': components['schemas']['Error'];
+                };
+            };
+            /** @description I'm Ai */
+            418: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    'application/json': components['schemas']['Error'];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    'application/json': components['schemas']['Error'];
+                };
+            };
+        };
+    };
+    'i___2fa___disable-password-login': {
+        requestBody: {
+            content: {
+                'application/json': {
+                    value: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description OK (without any results) */
+            204: {
+                headers: {
+                    [name: string]: unknown;
                 };
             };
             /** @description Client error */

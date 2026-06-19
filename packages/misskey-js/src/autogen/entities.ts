@@ -405,6 +405,7 @@ export type HashtagsTrendResponse = operations['hashtags___trend']['responses'][
 export type HashtagsUsersRequest = operations['hashtags___users']['requestBody']['content']['application/json'];
 export type HashtagsUsersResponse = operations['hashtags___users']['responses']['200']['content']['application/json'];
 export type IResponse = operations['i']['responses']['200']['content']['application/json'];
+export type I2faDisablePasswordLoginRequest = operations['i___2fa___disable-password-login']['requestBody']['content']['application/json'];
 export type I2faDoneRequest = operations['i___2fa___done']['requestBody']['content']['application/json'];
 export type I2faDoneResponse = operations['i___2fa___done']['responses']['200']['content']['application/json'];
 export type I2faKeyDoneRequest = operations['i___2fa___key-done']['requestBody']['content']['application/json'];

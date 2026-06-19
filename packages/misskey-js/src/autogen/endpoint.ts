@@ -402,6 +402,7 @@ import type {
 	HashtagsUsersRequest,
 	HashtagsUsersResponse,
 	IResponse,
+	I2faDisablePasswordLoginRequest,
 	I2faDoneRequest,
 	I2faDoneResponse,
 	I2faKeyDoneRequest,
@@ -930,6 +931,7 @@ export type Endpoints = {
 	'hashtags/trend': { req: EmptyRequest; res: HashtagsTrendResponse };
 	'hashtags/users': { req: HashtagsUsersRequest; res: HashtagsUsersResponse };
 	'i': { req: EmptyRequest; res: IResponse };
+	'i/2fa/disable-password-login': { req: I2faDisablePasswordLoginRequest; res: EmptyResponse };
 	'i/2fa/done': { req: I2faDoneRequest; res: I2faDoneResponse };
 	'i/2fa/key-done': { req: I2faKeyDoneRequest; res: I2faKeyDoneResponse };
 	'i/2fa/password-less': { req: I2faPasswordLessRequest; res: EmptyResponse };
