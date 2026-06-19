@@ -165,7 +165,9 @@ export class SigninApiService {
 		}
 
 		// Compare password
-		const same = await bcrypt.compare(password, profile.password!);
+		const same = profile.disablePasswordLogin
+			? false
+			: await bcrypt.compare(password, profile.password!);
 
 		const fail = async (status?: number, failure?: { id: string; }) => {
 			// Append signin history

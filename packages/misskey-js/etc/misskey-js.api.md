@@ -1955,6 +1955,7 @@ declare namespace entities {
         HashtagsUsersRequest,
         HashtagsUsersResponse,
         IResponse,
+        I2faDisablePasswordLoginRequest,
         I2faDoneRequest,
         I2faDoneResponse,
         I2faKeyDoneResponse,
@@ -2560,6 +2561,9 @@ type HashtagsUsersRequest = operations['hashtags___users']['requestBody']['conte
 
 // @public (undocumented)
 type HashtagsUsersResponse = operations['hashtags___users']['responses']['200']['content']['application/json'];
+
+// @public (undocumented)
+type I2faDisablePasswordLoginRequest = operations['i___2fa___disable-password-login']['requestBody']['content']['application/json'];
 
 // @public (undocumented)
 type I2faDoneRequest = operations['i___2fa___done']['requestBody']['content']['application/json'];

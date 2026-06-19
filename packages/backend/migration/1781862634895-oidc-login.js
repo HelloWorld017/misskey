@@ -20,6 +20,7 @@ export class OidcLogin1781862634895 {
         await queryRunner.query(`CREATE INDEX "IDX_b5c624733932df5c2eece82dd8" ON "user_oidc_link" ("userId")`);
         await queryRunner.query(`CREATE UNIQUE INDEX "IDX_748941d0d8b45e6d14cf3451dc" ON "user_oidc_link" ("issuer", "subject")`);
         await queryRunner.query(`ALTER TABLE "user_oidc_link" ADD CONSTRAINT "FK_b5c624733932df5c2eece82dd8c" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "user_profile" ADD "disablePasswordLogin" boolean NOT NULL DEFAULT false`);
     }
 
     async down(queryRunner) {
@@ -36,5 +37,6 @@ export class OidcLogin1781862634895 {
         await queryRunner.query(`ALTER TABLE "meta" DROP COLUMN "oidcClientId"`);
         await queryRunner.query(`ALTER TABLE "meta" DROP COLUMN "oidcIssuer"`);
         await queryRunner.query(`ALTER TABLE "meta" DROP COLUMN "enableOidc"`);
+        await queryRunner.query(`ALTER TABLE "user_profile" DROP COLUMN "disablePasswordLogin"`);
     }
 }
