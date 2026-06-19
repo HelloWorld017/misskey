@@ -16,10 +16,12 @@ import { SignupService } from '@/core/SignupService.js';
 import { bindThis } from '@/decorators.js';
 import Logger from '@/logger.js';
 import { LoggerService } from '@/core/LoggerService.js';
+import { OidcClientService, type OidcClaims } from '@/core/OidcClientService.js';
+import { OidcLinkApiService } from '@/core/OidcLinkApiService.js';
 import { SigninService } from './SigninService.js';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 
-type OidcState = {
+type OidcSigninState = {
 	codeVerifier: string;
 	nonce: string;
 };
@@ -28,17 +30,15 @@ type OidcTicket = {
 	userId: string;
 };
 
-type OidcClaims = oidc.IDToken & Record<string, unknown>;
+type OidcLinkState = {
+	codeVerifier: string;
+	nonce: string;
+	userId: string;
+};
 
 @Injectable()
 export class OidcSigninApiService {
 	private logger: Logger;
-	private configurationCache: {
-		issuer: string;
-		clientId: string;
-		clientSecret: string | null;
-		configuration: oidc.Configuration;
-	} | null = null;
 
 	constructor(
 		@Inject(DI.config)
@@ -63,52 +63,18 @@ export class OidcSigninApiService {
 		private signupService: SignupService,
 		private signinService: SigninService,
 		private loggerService: LoggerService,
+		private oidcClientService: OidcClientService,
+		private oidcLinkApiService: OidcLinkApiService,
 	) {
 		this.logger = this.loggerService.getLogger('OidcSignin');
-	}
-
-	private get redirectUri(): string {
-		return new URL('/api/oidc/callback', this.config.url).toString();
 	}
 
 	private get frontendCallbackUri(): string {
 		return new URL('/oidc/callback', this.config.url).toString();
 	}
 
-	private get isConfigured(): boolean {
-		return this.meta.enableOidc && this.meta.oidcIssuer != null && this.meta.oidcClientId != null;
-	}
-
-	@bindThis
-	private async getConfiguration(): Promise<oidc.Configuration> {
-		if (!this.isConfigured) {
-			throw new Error('OIDC is not configured');
-		}
-
-		const issuer = this.meta.oidcIssuer!;
-		const clientId = this.meta.oidcClientId!;
-		const clientSecret = this.meta.oidcClientSecret || null;
-
-		if (this.configurationCache && this.configurationCache.issuer === issuer && this.configurationCache.clientId === clientId && this.configurationCache.clientSecret === clientSecret) {
-			return this.configurationCache.configuration;
-		}
-
-		const configuration = await oidc.discovery(
-			new URL(issuer),
-			clientId,
-			clientSecret ? { client_secret: clientSecret } : undefined,
-			clientSecret ? oidc.ClientSecretPost(clientSecret) : oidc.None(),
-			{ timeout: 10 },
-		);
-
-		this.configurationCache = {
-			issuer,
-			clientId,
-			clientSecret,
-			configuration,
-		};
-
-		return configuration;
+	private get settingsCallbackUri(): string {
+		return new URL('/settings/security', this.config.url).toString();
 	}
 
 	@bindThis
@@ -121,13 +87,22 @@ export class OidcSigninApiService {
 	}
 
 	@bindThis
+	private redirectToSettings(reply: FastifyReply, params: Record<string, string>): void {
+		const url = new URL(this.settingsCallbackUri);
+		for (const [key, value] of Object.entries(params)) {
+			url.searchParams.set(key, value);
+		}
+		reply.code(302).redirect(url.toString());
+	}
+
+	@bindThis
 	public async login(_request: FastifyRequest, reply: FastifyReply): Promise<void> {
-		if (!this.isConfigured) {
+		if (!this.oidcClientService.isConfigured) {
 			reply.code(404);
 			return;
 		}
 
-		const configuration = await this.getConfiguration();
+		const configuration = await this.oidcClientService.getConfiguration();
 		const state = oidc.randomState();
 		const nonce = oidc.randomNonce();
 		const codeVerifier = oidc.randomPKCECodeVerifier();
@@ -135,18 +110,15 @@ export class OidcSigninApiService {
 
 		await this.redisClient.set(
 			`oidc:signin:state:${state}`,
-			JSON.stringify({ codeVerifier, nonce } satisfies OidcState),
+			JSON.stringify({ codeVerifier, nonce } satisfies OidcSigninState),
 			'EX',
 			60 * 10,
 		);
 
-		const redirectTo = oidc.buildAuthorizationUrl(configuration, {
-			redirect_uri: this.redirectUri,
-			scope: this.meta.oidcScope,
+		const redirectTo = this.oidcClientService.buildAuthorizationUrl(configuration, {
 			state,
 			nonce,
-			code_challenge: codeChallenge,
-			code_challenge_method: 'S256',
+			codeChallenge,
 		});
 
 		reply.code(302).redirect(redirectTo.toString());
@@ -155,7 +127,7 @@ export class OidcSigninApiService {
 	@bindThis
 	public async callback(request: FastifyRequest, reply: FastifyReply): Promise<void> {
 		try {
-			if (!this.isConfigured) {
+			if (!this.oidcClientService.isConfigured) {
 				this.redirectToFrontend(reply, { error: 'not_configured' });
 				return;
 			}
@@ -167,52 +139,114 @@ export class OidcSigninApiService {
 				return;
 			}
 
-			const stateKey = `oidc:signin:state:${state}`;
-			const stateJson = await this.redisClient.get(stateKey);
-			await this.redisClient.del(stateKey);
-			if (stateJson == null) {
-				this.redirectToFrontend(reply, { error: 'invalid_state' });
+			const signinKey = `oidc:signin:state:${state}`;
+			const signinStateJson = await this.redisClient.get(signinKey);
+			if (signinStateJson != null) {
+				await this.redisClient.del(signinKey);
+				await this.signinCallback(reply, currentUrl, state, signinStateJson);
 				return;
 			}
 
-			const savedState = JSON.parse(stateJson) as OidcState;
-			const configuration = await this.getConfiguration();
-			const tokenResponse = await oidc.authorizationCodeGrant(configuration, currentUrl, {
-				expectedState: state,
-				expectedNonce: savedState.nonce,
-				pkceCodeVerifier: savedState.codeVerifier,
-				idTokenExpected: true,
-			});
-
-			const claims = tokenResponse.claims() as OidcClaims | undefined;
-			if (claims == null || typeof claims.sub !== 'string' || typeof claims.iss !== 'string') {
-				this.redirectToFrontend(reply, { error: 'invalid_claims' });
+			const linkState = await this.oidcLinkApiService.readState(state);
+			if (linkState != null) {
+				await this.oidcLinkApiService.deleteState(state);
+				await this.linkCallback(reply, currentUrl, state, linkState);
 				return;
 			}
 
-			const user = await this.findOrCreateUser(claims);
-			if (user == null) {
-				this.redirectToFrontend(reply, { error: 'account_not_linked' });
-				return;
-			}
-
-			if (user.isSuspended) {
-				this.redirectToFrontend(reply, { error: 'suspended' });
-				return;
-			}
-
-			const ticket = oidc.randomState();
-			await this.redisClient.set(
-				`oidc:signin:ticket:${ticket}`,
-				JSON.stringify({ userId: user.id } satisfies OidcTicket),
-				'EX',
-				60,
-			);
-
-			this.redirectToFrontend(reply, { ticket });
+			this.redirectToFrontend(reply, { error: 'invalid_state' });
 		} catch (err) {
 			this.logger.warn(`OIDC callback failed: ${err instanceof Error ? err.message : String(err)}`);
 			this.redirectToFrontend(reply, { error: 'signin_failed' });
+		}
+	}
+
+	@bindThis
+	private async signinCallback(reply: FastifyReply, currentUrl: URL, state: string, stateJson: string): Promise<void> {
+		const savedState = JSON.parse(stateJson) as OidcSigninState;
+
+		const claims = await this.oidcClientService.authorizationCodeGrant(currentUrl, {
+			expectedState: state,
+			expectedNonce: savedState.nonce,
+			pkceCodeVerifier: savedState.codeVerifier,
+		});
+
+		if (claims == null) {
+			this.redirectToFrontend(reply, { error: 'invalid_claims' });
+			return;
+		}
+
+		const user = await this.findOrCreateUser(claims);
+		if (user == null) {
+			this.redirectToFrontend(reply, { error: 'account_not_linked' });
+			return;
+		}
+
+		if (user.isSuspended) {
+			this.redirectToFrontend(reply, { error: 'suspended' });
+			return;
+		}
+
+		const ticket = oidc.randomState();
+		await this.redisClient.set(
+			`oidc:signin:ticket:${ticket}`,
+			JSON.stringify({ userId: user.id } satisfies OidcTicket),
+			'EX',
+			60,
+		);
+
+		this.redirectToFrontend(reply, { ticket });
+	}
+
+	@bindThis
+	private async linkCallback(reply: FastifyReply, currentUrl: URL, state: string, linkState: OidcLinkState): Promise<void> {
+		try {
+			const claims = await this.oidcClientService.authorizationCodeGrant(currentUrl, {
+				expectedState: state,
+				expectedNonce: linkState.nonce,
+				pkceCodeVerifier: linkState.codeVerifier,
+			});
+
+			if (claims == null) {
+				this.redirectToSettings(reply, { oidcLink: 'invalid_claims' });
+				return;
+			}
+
+			const user = await this.usersRepository.findOneBy({
+				id: linkState.userId,
+				host: IsNull(),
+			}) as MiLocalUser | null;
+
+			if (user == null || user.isSuspended) {
+				this.redirectToSettings(reply, { oidcLink: 'failed' });
+				return;
+			}
+
+			const existingLink = await this.userOidcLinksRepository.findOneBy({
+				issuer: claims.iss as string,
+				subject: claims.sub,
+			});
+
+			if (existingLink != null && existingLink.userId !== user.id) {
+				this.redirectToSettings(reply, { oidcLink: 'already_linked' });
+				return;
+			}
+
+			if (existingLink == null) {
+				await this.userOidcLinksRepository.insertOne({
+					id: this.idService.gen(),
+					userId: user.id,
+					issuer: claims.iss as string,
+					subject: claims.sub,
+					createdAt: new Date(),
+					updatedAt: new Date(),
+				});
+			}
+
+			this.redirectToSettings(reply, { oidcLink: 'success' });
+		} catch (err) {
+			this.logger.warn(`OIDC link callback failed: ${err instanceof Error ? err.message : String(err)}`);
+			this.redirectToSettings(reply, { oidcLink: 'failed' });
 		}
 	}
 

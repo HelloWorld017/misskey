@@ -439,6 +439,9 @@ import type {
 	INotificationsResponse,
 	INotificationsGroupedRequest,
 	INotificationsGroupedResponse,
+	IOidcLinkConnectResponse,
+	IOidcLinkDisconnectRequest,
+	IOidcLinkListResponse,
 	IPageLikesRequest,
 	IPageLikesResponse,
 	IPagesRequest,
@@ -959,6 +962,9 @@ export type Endpoints = {
 	'i/move': { req: IMoveRequest; res: IMoveResponse };
 	'i/notifications': { req: INotificationsRequest; res: INotificationsResponse };
 	'i/notifications-grouped': { req: INotificationsGroupedRequest; res: INotificationsGroupedResponse };
+	'i/oidc-link/connect': { req: EmptyRequest; res: IOidcLinkConnectResponse };
+	'i/oidc-link/disconnect': { req: IOidcLinkDisconnectRequest; res: EmptyResponse };
+	'i/oidc-link/list': { req: EmptyRequest; res: IOidcLinkListResponse };
 	'i/page-likes': { req: IPageLikesRequest; res: IPageLikesResponse };
 	'i/pages': { req: IPagesRequest; res: IPagesResponse };
 	'i/pin': { req: IPinRequest; res: IPinResponse };

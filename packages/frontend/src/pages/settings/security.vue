@@ -52,20 +52,58 @@ SPDX-License-Identifier: AGPL-3.0-only
 				</FormSlot>
 			</FormSection>
 		</SearchMarker>
+
+		<SearchMarker :keywords="['oidc', 'openid', 'link', 'connect']">
+			<FormSection>
+				<template #label><SearchLabel>{{ i18n.ts.oidcAccountLink }}</SearchLabel></template>
+
+				<template v-if="instance.oidc?.enabled">
+					<MkInfo>{{ i18n.ts.oidcAccountLinkDescription }}</MkInfo>
+
+					<div v-if="oidcLinkLoading" class="_gaps_s _margin">
+						<MkLoading/>
+					</div>
+					<div v-else-if="oidcLinks.length === 0" class="_gaps_s _margin">
+						{{ i18n.ts.oidcNoLinks }}
+					</div>
+					<div v-else class="_gaps_s _margin">
+						<div v-for="link in oidcLinks" :key="link.id" class="_panel _gaps_s oidcLinkItem">
+							<div class="_monospace">{{ link.issuer }}</div>
+							<div><MkTime :time="link.createdAt"/></div>
+							<div>
+								<MkButton danger @click="unlink(link)">
+									{{ i18n.ts.oidcUnlink }}
+								</MkButton>
+							</div>
+						</div>
+					</div>
+
+					<MkButton primary @click="connectOidc">
+						<i class="ti ti-link"></i> {{ i18n.ts.oidcLink }}
+					</MkButton>
+				</template>
+				<template v-else>
+					<MkInfo warn>{{ i18n.ts.oidcNotConfigured }}</MkInfo>
+				</template>
+			</FormSection>
+		</SearchMarker>
 	</div>
 </SearchMarker>
 </template>
 
 <script lang="ts" setup>
-import { computed, markRaw } from 'vue';
+import { computed, markRaw, onMounted, ref } from 'vue';
 import X2fa from './2fa.vue';
 import FormSection from '@/components/form/section.vue';
 import FormSlot from '@/components/form/slot.vue';
 import MkButton from '@/components/MkButton.vue';
+import MkInfo from '@/components/MkInfo.vue';
 import MkPagination from '@/components/MkPagination.vue';
+import MkTime from '@/components/global/MkTime.vue';
 import * as os from '@/os.js';
 import { misskeyApi } from '@/utility/misskey-api.js';
 import { i18n } from '@/i18n.js';
+import { instance } from '@/instance.js';
 import { definePage } from '@/page.js';
 import MkFeatureBanner from '@/components/MkFeatureBanner.vue';
 import { Paginator } from '@/utility/paginator.js';
@@ -73,6 +111,61 @@ import { Paginator } from '@/utility/paginator.js';
 const paginator = markRaw(new Paginator('i/signin-history', {
 	limit: 5,
 }));
+
+type OidcLink = {
+	id: string;
+	issuer: string;
+	createdAt: string;
+};
+
+const oidcLinks = ref<OidcLink[]>([]);
+const oidcLinkLoading = ref(true);
+
+async function loadOidcLinks(): Promise<void> {
+	try {
+		const res = await misskeyApi('i/oidc-link/list', {});
+		oidcLinks.value = res;
+	} finally {
+		oidcLinkLoading.value = false;
+	}
+}
+
+onMounted(async () => {
+	void loadOidcLinks();
+
+	const params = new URLSearchParams(window.location.search);
+	const oidcLink = params.get('oidcLink');
+	if (oidcLink != null) {
+		window.history.replaceState({}, '', '/settings/security');
+		if (oidcLink === 'success') {
+			os.success();
+		} else {
+			os.alert({
+				type: 'error',
+				text: i18n.ts.oidcLinkFailedDescription,
+			});
+		}
+	}
+});
+
+async function connectOidc(): Promise<void> {
+	const res = await misskeyApi('i/oidc-link/connect', {});
+	window.location.href = res.url;
+}
+
+async function unlink(link: OidcLink): Promise<void> {
+	const { canceled } = await os.confirm({
+		type: 'warning',
+		text: i18n.ts.oidcUnlinkConfirm,
+	});
+	if (canceled) return;
+
+	await misskeyApi('i/oidc-link/disconnect', {
+		linkId: link.id,
+	});
+	os.success();
+	void loadOidcLinks();
+}
 
 async function change() {
 	const { canceled: canceled2, result: newPassword } = await os.inputText({
@@ -176,5 +269,9 @@ definePage(() => ({
 			opacity: 0.7;
 		}
 	}
+}
+
+.oidcLinkItem {
+	padding: 12px;
 }
 </style>
