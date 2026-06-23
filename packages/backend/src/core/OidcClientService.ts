@@ -44,6 +44,9 @@ export class OidcClientService {
 		const issuer = this.meta.oidcIssuer;
 		const clientId = this.meta.oidcClientId;
 		const clientSecret = this.meta.oidcClientSecret || null;
+		if (issuer == null || clientId == null) {
+			throw new Error('OIDC issuer or clientId is not configured');
+		}
 
 		if (
 			this.configurationCache &&

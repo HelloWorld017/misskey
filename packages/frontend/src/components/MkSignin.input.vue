@@ -60,7 +60,7 @@ import { ref } from 'vue';
 import { toUnicode } from 'punycode.js';
 
 import { query, extractDomain } from '@@/js/url.js';
-import { apiUrl, host as configHost } from '@@/js/config.js';
+import { accountHost as configHost, apiUrl } from '@@/js/config.js';
 import type { OpenOnRemoteOptions } from '@/utility/please-login.js';
 import { i18n } from '@/i18n.js';
 import * as os from '@/os.js';

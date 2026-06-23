@@ -9,6 +9,9 @@
 # You can set url from an environment variable instead.
 url: https://example.tld/
 
+# Hostname used in account handles. Omit this to use the hostname of `url`.
+# accountHost: example.com
+
 # ONCE YOU HAVE STARTED THE INSTANCE, DO NOT CHANGE THE
 # URL SETTINGS AFTER THAT!
 

@@ -6,7 +6,7 @@
 import { toUnicode } from 'punycode.js';
 import { defineAsyncComponent, ref, watch } from 'vue';
 import * as Misskey from 'misskey-js';
-import { host, url } from '@@/js/config.js';
+import { accountHost, url } from '@@/js/config.js';
 import type { Router } from '@/router.js';
 import type { MenuItem } from '@/types/menu.js';
 import { i18n } from '@/i18n.js';
@@ -171,7 +171,7 @@ export function getUserMenu(user: Misskey.entities.UserDetailed, router: Router 
 		icon: 'ti ti-at',
 		text: i18n.ts.copyUsername,
 		action: () => {
-			copyToClipboard(`@${user.username}@${user.host ?? host}`);
+			copyToClipboard(`@${user.username}@${user.host ?? accountHost}`);
 		},
 	});
 
@@ -188,7 +188,7 @@ export function getUserMenu(user: Misskey.entities.UserDetailed, router: Router 
 		icon: 'ti ti-rss',
 		text: i18n.ts.copyRSS,
 		action: () => {
-			copyToClipboard(`${user.host ?? host}/@${user.username}.atom`);
+			copyToClipboard(user.host == null ? `${url}/@${user.username}.atom` : `${user.host}/@${user.username}.atom`);
 		},
 	});
 

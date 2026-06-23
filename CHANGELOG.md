@@ -3,6 +3,9 @@
 ### General
 - Feat: OpenID Connectでログインできるように
 
+### Server
+- Feat: `accountHost` 設定で公開URLのホスト名とアカウントハンドルのホスト名を分離できるように
+
 ## 2026.6.0
 
 ### General

@@ -10,7 +10,6 @@ import { IsNull } from 'typeorm';
 import { DI } from '@/di-symbols.js';
 import type { UsersRepository } from '@/models/_.js';
 import type { MiLocalUser, MiRemoteUser } from '@/models/User.js';
-import type { Config } from '@/config.js';
 import type Logger from '@/logger.js';
 import { UtilityService } from '@/core/UtilityService.js';
 import { ILink, WebfingerService } from '@/core/WebfingerService.js';
@@ -24,9 +23,6 @@ export class RemoteUserResolveService {
 	private logger: Logger;
 
 	constructor(
-		@Inject(DI.config)
-		private config: Config,
-
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
 
@@ -56,7 +52,7 @@ export class RemoteUserResolveService {
 
 		host = this.utilityService.toPuny(host);
 
-		if (host === this.utilityService.toPuny(this.config.host)) {
+		if (this.utilityService.isSelfAccountHost(host)) {
 			this.logger.info(`return local user: ${usernameLower}`);
 			return await this.usersRepository.findOneBy({ usernameLower, host: IsNull() }).then(u => {
 				if (u == null) {

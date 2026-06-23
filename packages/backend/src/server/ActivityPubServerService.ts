@@ -788,7 +788,7 @@ export class ActivityPubServerService {
 
 			const acct = Acct.parse(request.params.acct);
 			// normalize acct host
-			if (this.utilityService.isSelfHost(acct.host)) acct.host = null;
+			if (this.utilityService.isSelfAccountHost(acct.host)) acct.host = null;
 
 			const user = await this.usersRepository.findOneBy({
 				usernameLower: acct.username.toLowerCase(),

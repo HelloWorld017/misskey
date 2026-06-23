@@ -9,8 +9,8 @@ import { DI } from '@/di-symbols.js';
 import { type FollowingsRepository, MiUser, type MutingsRepository, type UserProfilesRepository, type UsersRepository } from '@/models/_.js';
 import { bindThis } from '@/decorators.js';
 import { sqlLikeEscape } from '@/misc/sql-like-escape.js';
-import type { Config } from '@/config.js';
 import { UserEntityService } from '@/core/entities/UserEntityService.js';
+import { UtilityService } from '@/core/UtilityService.js';
 import { Packed } from '@/misc/json-schema.js';
 
 function defaultActiveThreshold() {
@@ -20,9 +20,6 @@ function defaultActiveThreshold() {
 @Injectable()
 export class UserSearchService {
 	constructor(
-		@Inject(DI.config)
-		private config: Config,
-
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
 
@@ -36,6 +33,7 @@ export class UserSearchService {
 		private mutingsRepository: MutingsRepository,
 
 		private userEntityService: UserEntityService,
+		private utilityService: UtilityService,
 	) {
 	}
 
@@ -198,7 +196,7 @@ export class UserSearchService {
 		}
 
 		if (params.host) {
-			if (params.host === this.config.hostname || params.host === '.') {
+			if (this.utilityService.isSelfAccountHost(params.host) || this.utilityService.isSelfHost(params.host) || params.host === '.') {
 				userQuery.andWhere('user.host IS NULL');
 			} else {
 				userQuery.andWhere('user.host LIKE :host', {

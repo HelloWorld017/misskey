@@ -7,7 +7,7 @@ process.env.NODE_ENV = 'test';
 
 import * as assert from 'assert';
 import { beforeAll, describe, test } from 'vitest';
-import { api, host, origin, relativeFetch, signup } from '../utils.js';
+import { accountHost, api, origin, relativeFetch, signup } from '../utils.js';
 import type * as misskey from 'misskey-js';
 
 describe('.well-known', () => {
@@ -36,7 +36,7 @@ describe('.well-known', () => {
 	});
 
 	test('webfinger', async () => {
-		const preflight = await relativeFetch(`.well-known/webfinger?resource=acct:alice@${host}`, {
+		const preflight = await relativeFetch(`.well-known/webfinger?resource=acct:alice@${accountHost}`, {
 			method: 'options',
 			headers: {
 				'Access-Control-Request-Method': 'GET',
@@ -46,7 +46,7 @@ describe('.well-known', () => {
 		assert.ok(preflight.ok);
 		assert.strictEqual(preflight.headers.get('Access-Control-Allow-Headers'), 'Accept');
 
-		const res = await relativeFetch(`.well-known/webfinger?resource=acct:alice@${host}`);
+		const res = await relativeFetch(`.well-known/webfinger?resource=acct:alice@${accountHost}`);
 		assert.ok(res.ok);
 		assert.strictEqual(res.headers.get('Access-Control-Allow-Origin'), '*');
 		assert.strictEqual(res.headers.get('Access-Control-Expose-Headers'), 'Vary');
@@ -55,7 +55,7 @@ describe('.well-known', () => {
 		const webfinger = await res.json();
 
 		assert.deepStrictEqual(webfinger, {
-			subject: `acct:alice@${host}`,
+			subject: `acct:alice@${accountHost}`,
 			links: [{
 				rel: 'self',
 				type: 'application/activity+json',

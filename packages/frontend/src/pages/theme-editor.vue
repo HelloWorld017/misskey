@@ -78,7 +78,7 @@ import tinycolor from 'tinycolor2';
 import JSON5 from 'json5';
 import lightTheme from '@@/themes/_light.json5';
 import darkTheme from '@@/themes/_dark.json5';
-import { host } from '@@/js/config.js';
+import { accountHost } from '@@/js/config.js';
 import type { Theme } from '@@/js/theme.js';
 import { genId } from '@/utility/id.js';
 import MkButton from '@/components/MkButton.vue';
@@ -129,7 +129,7 @@ const fgColors = [
 const theme = ref<Theme>({
 	id: genId(),
 	name: 'untitled',
-	author: `@${$i.username}@${toUnicode(host)}`,
+	author: `@${$i.username}@${toUnicode(accountHost)}`,
 	base: 'light',
 	props: deepClone(lightTheme.props),
 });
