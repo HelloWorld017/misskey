@@ -12,6 +12,7 @@ import fastifyStatic from '@fastify/static';
 import fastifyRawBody from 'fastify-raw-body';
 import { IsNull } from 'typeorm';
 import { GlobalEventService } from '@/core/GlobalEventService.js';
+import { UtilityService } from '@/core/UtilityService.js';
 import type { Config } from '@/config.js';
 import type { EmojisRepository, MiMeta, UserProfilesRepository, UsersRepository } from '@/models/_.js';
 import { DI } from '@/di-symbols.js';
@@ -70,6 +71,7 @@ export class ServerService implements OnApplicationShutdown {
 		private globalEventService: GlobalEventService,
 		private loggerService: LoggerService,
 		private oauth2ProviderService: OAuth2ProviderService,
+		private utilityService: UtilityService,
 	) {
 		this.logger = this.loggerService.getLogger('server', 'gray');
 	}
@@ -225,7 +227,7 @@ export class ServerService implements OnApplicationShutdown {
 			const user = await this.usersRepository.findOne({
 				where: {
 					usernameLower: username.toLowerCase(),
-					host: (host == null) || (host === this.config.host) ? IsNull() : host,
+					host: host == null || this.utilityService.isSelfAccountHost(host) ? IsNull() : host,
 					isSuspended: false,
 				},
 			});

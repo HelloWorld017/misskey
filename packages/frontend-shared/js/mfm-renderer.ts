@@ -6,7 +6,7 @@
 import { h } from 'vue';
 import * as mfm from 'mfm-js';
 import * as Misskey from 'misskey-js';
-import { host } from './config.js';
+import { accountHost } from './config.js';
 import type { Component, VNode, SetupContext } from 'vue';
 
 function safeParseFloat(str: unknown): number | null {
@@ -414,7 +414,7 @@ export function createMfmRenderer<P extends MfmBaseProps = MfmBaseProps>(config:
 				case 'mention': {
 					return [h(Mention, {
 						key: Math.random(),
-						host: (token.props.host == null && props.author && props.author.host != null ? props.author.host : token.props.host) ?? host,
+						host: (token.props.host == null && props.author && props.author.host != null ? props.author.host : token.props.host) ?? accountHost,
 						username: token.props.username,
 						...linkProps,
 					})];

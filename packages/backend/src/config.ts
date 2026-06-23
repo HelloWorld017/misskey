@@ -35,6 +35,7 @@ type SentryBackendConfig = {
  */
 type Source = {
 	url?: string;
+	accountHost?: string;
 	port?: number;
 	socket?: string;
 	trustProxy?: FastifyServerOptions['trustProxy'];
@@ -201,6 +202,7 @@ export type Config = {
 	setupPassword: string | undefined;
 	host: string;
 	hostname: string;
+	accountHost: string;
 	scheme: string;
 	wsScheme: string;
 	apiUrl: string;
@@ -275,6 +277,7 @@ export function loadConfig(): Config {
 	const version = meta.version;
 	const host = url.host;
 	const hostname = url.hostname;
+	const accountHost = config.accountHost == null ? host : tryCreateHost(config.accountHost);
 	const scheme = url.protocol.replace(/:$/, '');
 	const wsScheme = scheme.replace('http', 'ws');
 
@@ -308,6 +311,7 @@ export function loadConfig(): Config {
 		enableIpRateLimit: config.enableIpRateLimit ?? true,
 		host,
 		hostname,
+		accountHost,
 		scheme,
 		wsScheme,
 		wsUrl: `${wsScheme}://${host}`,
@@ -366,6 +370,16 @@ function tryCreateUrl(url: string) {
 		return new URL(url);
 	} catch (_) {
 		throw new Error(`url="${url}" is not a valid URL.`);
+	}
+}
+
+function tryCreateHost(host: string) {
+	try {
+		const url = new URL(`http://${host}`);
+		if (url.pathname !== '/' || url.search !== '' || url.hash !== '') throw new Error();
+		return url.host;
+	} catch (_) {
+		throw new Error(`accountHost="${host}" is not a valid host.`);
 	}
 }
 

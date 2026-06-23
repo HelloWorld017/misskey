@@ -26,13 +26,19 @@ export class UtilityService {
 
 	@bindThis
 	public getFullApAccount(username: string, host: string | null): string {
-		return host ? `${username}@${this.toPuny(host)}` : `${username}@${this.toPuny(this.config.host)}`;
+		return host ? `${username}@${this.toPuny(host)}` : `${username}@${this.toPuny(this.config.accountHost)}`;
 	}
 
 	@bindThis
 	public isSelfHost(host: string | null): boolean {
 		if (host == null) return true;
 		return this.toPuny(this.config.host) === this.toPuny(host);
+	}
+
+	@bindThis
+	public isSelfAccountHost(host: string | null): boolean {
+		if (host == null) return true;
+		return this.toPuny(this.config.accountHost) === this.toPuny(host);
 	}
 
 	@bindThis
@@ -115,7 +121,12 @@ export class UtilityService {
 
 	@bindThis
 	public toPuny(host: string): string {
-		return domainToASCII(host.toLowerCase());
+		const lower = host.toLowerCase();
+		try {
+			return new URL(`http://${lower}`).host;
+		} catch (_) {
+			return domainToASCII(lower);
+		}
 	}
 
 	@bindThis

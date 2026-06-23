@@ -104,7 +104,7 @@ const emit = defineEmits<{
 	(ev: 'signupEmailPending'): void;
 }>();
 
-const host = toUnicode(config.host);
+const host = toUnicode(config.accountHost);
 
 const hcaptcha = ref<Captcha | undefined>();
 const mcaptcha = ref<Captcha | undefined>();

@@ -14,6 +14,7 @@ import { escapeAttribute, escapeValue } from '@/misc/prelude/xml.js';
 import type { MiUser } from '@/models/User.js';
 import * as Acct from '@/misc/acct.js';
 import { UserEntityService } from '@/core/entities/UserEntityService.js';
+import { UtilityService } from '@/core/UtilityService.js';
 import { bindThis } from '@/decorators.js';
 import { NodeinfoServerService } from './NodeinfoServerService.js';
 import { OAuth2ProviderService } from './oauth/OAuth2ProviderService.js';
@@ -35,6 +36,7 @@ export class WellKnownServerService {
 		private nodeinfoServerService: NodeinfoServerService,
 		private userEntityService: UserEntityService,
 		private oauth2ProviderService: OAuth2ProviderService,
+		private utilityService: UtilityService,
 	) {
 		//this.createServer = this.createServer.bind(this);
 	}
@@ -137,7 +139,7 @@ export class WellKnownServerService {
 						resource));
 
 			const fromAcct = (acct: Acct.Acct): FindOptionsWhere<MiUser> | number =>
-				!acct.host || acct.host === this.config.host.toLowerCase() ? {
+				!acct.host || this.utilityService.toPuny(acct.host) === this.config.accountHost ? {
 					usernameLower: acct.username.toLowerCase(),
 					host: IsNull(),
 					isSuspended: false,
@@ -162,7 +164,7 @@ export class WellKnownServerService {
 				return;
 			}
 
-			const subject = `acct:${user.username}@${this.config.host}`;
+			const subject = `acct:${user.username}@${this.config.accountHost}`;
 			const self = {
 				rel: 'self',
 				type: 'application/activity+json',

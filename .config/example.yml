@@ -79,6 +79,11 @@
 # Final accessible URL seen by a user.
 url: https://example.tld/
 
+# Hostname used in account handles. Omit this to use the hostname of `url`.
+# For example, set `url: https://social.example.com/` and
+# `accountHost: example.com` to use handles like `@user@example.com`.
+# accountHost: example.com
+
 # ONCE YOU HAVE STARTED THE INSTANCE, DO NOT CHANGE THE
 # URL SETTINGS AFTER THAT!
 

@@ -8,7 +8,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 	<img :class="$style.icon" :src="avatarUrl" alt="">
 	<span>
 		<span>@{{ username }}</span>
-		<span v-if="(host != localHost)" :class="$style.host">@{{ toUnicode(host) }}</span>
+		<span v-if="(host != accountHost)" :class="$style.host">@{{ toUnicode(host) }}</span>
 	</span>
 </MkA>
 </template>
@@ -16,7 +16,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 <script lang="ts" setup>
 import { toUnicode } from 'punycode.js';
 import { computed } from 'vue';
-import { host as localHost } from '@@/js/config.js';
+import { accountHost } from '@@/js/config.js';
 import type { MkABehavior } from '@/components/global/MkA.vue';
 import { $i } from '@/i.js';
 import { getStaticImageUrl } from '@/utility/media-proxy.js';
@@ -28,12 +28,12 @@ const props = defineProps<{
 	navigationBehavior?: MkABehavior;
 }>();
 
-const canonical = props.host === localHost ? `@${props.username}` : `@${props.username}@${toUnicode(props.host)}`;
+const canonical = props.host === accountHost ? `@${props.username}` : `@${props.username}@${toUnicode(props.host)}`;
 
 const url = `/${canonical}`;
 
 const isMe = $i && (
-	`@${props.username}@${toUnicode(props.host)}`.toLowerCase() === `@${$i.username}@${toUnicode(localHost)}`.toLowerCase()
+	`@${props.username}@${toUnicode(props.host)}`.toLowerCase() === `@${$i.username}@${toUnicode(accountHost)}`.toLowerCase()
 );
 
 const avatarUrl = computed(() => prefer.s.disableShowingAnimatedImages || prefer.s.dataSaver.avatar

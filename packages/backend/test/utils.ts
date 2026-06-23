@@ -41,6 +41,7 @@ const config = loadConfig();
 export const port = config.port;
 export const origin = config.url;
 export const host = new URL(config.url).host;
+export const accountHost = config.accountHost;
 
 export const WEBHOOK_HOST = 'http://localhost:15080';
 export const WEBHOOK_PORT = 15080;

@@ -16,6 +16,7 @@ import type { Config } from '@/config.js';
 import { DI } from '@/di-symbols.js';
 import * as Acct from '@/misc/acct.js';
 import { UserEntityService } from '@/core/entities/UserEntityService.js';
+import { UtilityService } from '@/core/UtilityService.js';
 import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
 import { PageEntityService } from '@/core/entities/PageEntityService.js';
 import { GalleryPostEntityService } from '@/core/entities/GalleryPostEntityService.js';
@@ -128,6 +129,7 @@ export class ClientServerService {
 		private feedService: FeedService,
 		private htmlTemplateService: HtmlTemplateService,
 		private clientLoggerService: ClientLoggerService,
+		private utilityService: UtilityService,
 	) {
 		//this.createServer = this.createServer.bind(this);
 		const backendRootdir = resolve(this.config.rootDir, 'packages/backend');
@@ -454,7 +456,7 @@ export class ClientServerService {
 			const { username, host } = Acct.parse(acct);
 			const user = await this.usersRepository.findOneBy({
 				usernameLower: username.toLowerCase(),
-				host: host ?? IsNull(),
+				host: host == null || this.utilityService.isSelfAccountHost(host) ? IsNull() : host,
 				isSuspended: false,
 				requireSigninToViewContents: false,
 			});
@@ -519,7 +521,7 @@ export class ClientServerService {
 			const { username, host } = Acct.parse(request.params.user);
 			const user = await this.usersRepository.findOneBy({
 				usernameLower: username.toLowerCase(),
-				host: host ?? IsNull(),
+				host: host == null || this.utilityService.isSelfAccountHost(host) ? IsNull() : host,
 				isSuspended: false,
 			});
 
@@ -625,7 +627,7 @@ export class ClientServerService {
 			const { username, host } = Acct.parse(request.params.user);
 			const user = await this.usersRepository.findOneBy({
 				usernameLower: username.toLowerCase(),
-				host: host ?? IsNull(),
+				host: host == null || this.utilityService.isSelfAccountHost(host) ? IsNull() : host,
 			});
 
 			if (user == null) return;
