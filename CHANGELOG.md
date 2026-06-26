@@ -1,4 +1,4 @@
-## Unreleased
+## 2026.6.0-nenw.1
 
 ### General
 - Feat: OpenID Connectでログインできるように
